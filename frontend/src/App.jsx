@@ -27,6 +27,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import TermsOfService from './pages/TermsOfService.jsx'
 import ContactUs from './pages/ContactUs.jsx'
 
+import { Analytics } from "@vercel/analytics/next"
+
 const AUTH_PATHS = ['/login', '/register', '/forgot-password']
 
 const NO_HEADER_PATHS = [
@@ -79,6 +81,7 @@ function App() {
             <Route path="/contact-us" element={<ContactUs />} />
           </Routes>
         </QueueInterceptor>
+        <Analytics />
       </main>
 
       <Footer />
