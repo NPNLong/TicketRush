@@ -358,9 +358,9 @@ function EventCard({ event, onEdit, onStatus, onDelete, isDark, delay }) {
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white' : 'border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'}`}>
             {Icon.edit} Sửa
           </button>
-          {/* ← Nút mới */}
           <button onClick={() => onStatus(event)}
-            className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-slate-200' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+            className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? cfg.dCls : cfg.cls
+              }`}>
             {Icon.status}
           </button>
           <button onClick={() => onDelete(event)}
@@ -417,6 +417,8 @@ function StatusModal({ open, event, onClose, onSave, isDark }) {
         <div className="space-y-2 p-5">
           {Object.entries(STATUS_CFG).map(([k, v]) => {
             const active = status === k
+            const isCurrent = event?.status === k   // ← so với status gốc của event
+
             return (
               <button key={k} onClick={() => setStatus(k)}
                 className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold transition ${active
@@ -425,7 +427,9 @@ function StatusModal({ open, event, onClose, onSave, isDark }) {
                   }`}>
                 <span className={`h-2 w-2 rounded-full ${active ? 'bg-current' : isDark ? 'bg-slate-600' : 'bg-slate-300'}`} />
                 {v.label}
-                {active && <span className="ml-auto text-[10px] font-bold uppercase tracking-widest opacity-70">Hiện tại</span>}
+                {isCurrent && (   // ← dùng isCurrent thay vì active
+                  <span className="ml-auto text-[10px] font-bold uppercase tracking-widest opacity-70">Hiện tại</span>
+                )}
               </button>
             )
           })}
