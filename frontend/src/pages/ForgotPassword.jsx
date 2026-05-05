@@ -107,7 +107,7 @@ function ForgotPassword() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="text-sm text-cyan-400 transition hover:text-cyan-300">
+            <Link to="/" className="text-sm text-cyan-400 transition hover:text-cyan-300">
               Quay lại đăng nhập
             </Link>
           </div>

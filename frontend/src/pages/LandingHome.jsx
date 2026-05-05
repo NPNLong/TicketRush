@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { authApi } from '../lib/api'  // ← thêm import này ở đầu file nếu chưa có
 
 // ─── Validation ────────────────────────────────────────────────────────────────
 function validateRegistration(f) {
@@ -382,7 +383,7 @@ function AuthDialog({ mode, onClose, onSwitch, onSuccess, onForgotPassword }) {
 }
 
 // ─── Forgot Password Dialog ────────────────────────────────────────────────────
-const FORGOT_IMG = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&q=80'
+const FORGOT_IMG = 'https://cdn.24h.com.vn/upload/2-2024/images/2024-06-08/432783453_981045163377877_5109057339270071183_n--1--1717821141-580-width1440height960.jpg'
 
 function ForgotPasswordDialog({ onClose, onBackToLogin }) {
     const [step, setStep] = useState(1) // 1 = request link, 2 = success
@@ -414,8 +415,7 @@ function ForgotPasswordDialog({ onClose, onBackToLogin }) {
 
         setLoading(true)
         try {
-            // TODO: thay bằng API thực: await authApi.forgotPassword({ identifier: v })
-            await new Promise(r => setTimeout(r, 800))
+            await authApi.forgotPassword({ email: v })
             setSentTo(v)
             setStep(2)
         } catch (err) {
