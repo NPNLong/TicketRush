@@ -196,28 +196,37 @@ function Checkout() {
       .finally(() => setLoading(false))
   }, [user, authLoading, seatIds.join(',')])
 
-  // Poll for payment status (every 4s) once user taps "Tôi đã chuyển khoản"
-  const startPolling = useCallback(() => {
-    if (!order?.id || pollRef.current) return
+  // [DEMO] Xác nhận ngay: gọi confirm → chờ 2s → chuyển màn thành công
+  const startPolling = useCallback(async () => {
+    if (!order?.id || paymentState === 'polling') return
     setPaymentState('polling')
-    setPollCount(0)
+    try { await ordersApi.confirm(order.id) } catch (e) { console.error('confirm error:', e) }
+    setTimeout(() => { doneRef.current = true; setPaymentState('paid') }, 2000)
+  }, [order?.id, paymentState])
 
-    pollRef.current = setInterval(async () => {
-      try {
-        const fresh = await ordersApi.get(order.id)
-        setPollCount(c => c + 1)
-        if (fresh.status === 'paid') {
-          clearInterval(pollRef.current); pollRef.current = null
-          setOrder(fresh); setPaymentState('paid')
-        }
-      } catch (e) { console.error('poll error:', e) }
-    }, 4000)
-  }, [order?.id])
+  const stopPolling = () => { setPaymentState('waiting') }
 
-  const stopPolling = () => {
-    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
-    setPaymentState('waiting')
-  }
+  // [PRODUCTION] Poll backend mỗi 4 giây chờ webhook/bank xác nhận
+  // const startPolling = useCallback(() => {
+  //   if (!order?.id || pollRef.current) return
+  //   setPaymentState('polling')
+  //   setPollCount(0)
+  //   pollRef.current = setInterval(async () => {
+  //     try {
+  //       const fresh = await ordersApi.get(order.id)
+  //       setPollCount(c => c + 1)
+  //       if (fresh.status === 'paid') {
+  //         clearInterval(pollRef.current); pollRef.current = null
+  //         setOrder(fresh); setPaymentState('paid')
+  //       }
+  //     } catch (e) { console.error('poll error:', e) }
+  //   }, 4000)
+  // }, [order?.id])
+  //
+  // const stopPolling = () => {
+  //   if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+  //   setPaymentState('waiting')
+  // }
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current) }, [])
 

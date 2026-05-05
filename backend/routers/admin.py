@@ -38,7 +38,13 @@ def create_event(
 
 @router.get("/events", response_model=List[EventOut])
 def list_all_events(db: Session = Depends(get_db), _=Depends(get_current_admin)):
-    events = db.query(Event).order_by(Event.created_at.desc()).all()
+    from sqlalchemy.orm import joinedload
+    events = (
+        db.query(Event)
+        .options(joinedload(Event.sections).joinedload(SeatSection.seats))
+        .order_by(Event.created_at.desc())
+        .all()
+    )
     return [_event_out(e, db) for e in events]
 
 
