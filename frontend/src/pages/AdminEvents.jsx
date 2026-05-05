@@ -72,6 +72,12 @@ const Icon = {
       <rect x="9" y="9" width="5" height="5" rx="1" />
     </svg>
   ),
+  status: (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+      <circle cx="8" cy="8" r="6.5" />
+      <path d="M8 5v3l2 2" />
+    </svg>
+  ),
 }
 
 // ─── Edit Modal ───────────────────────────────────────────────────────────────
@@ -301,7 +307,7 @@ function ConfirmDelete({ open, event, onCancel, onConfirm, isDark }) {
 }
 
 // ─── Event Card ───────────────────────────────────────────────────────────────
-function EventCard({ event, onEdit, onDelete, isDark, delay }) {
+function EventCard({ event, onEdit, onStatus, onDelete, isDark, delay }) {
   const cfg = STATUS_CFG[event.status] || STATUS_CFG.draft
   const formattedDate = event.event_date
     ? new Date(event.event_date).toLocaleDateString('vi-VN', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -352,6 +358,11 @@ function EventCard({ event, onEdit, onDelete, isDark, delay }) {
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white' : 'border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'}`}>
             {Icon.edit} Sửa
           </button>
+          {/* ← Nút mới */}
+          <button onClick={() => onStatus(event)}
+            className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? 'border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-slate-200' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+            {Icon.status}
+          </button>
           <button onClick={() => onDelete(event)}
             className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition ${isDark ? 'border-rose-500/30 bg-rose-500/5 text-rose-400 hover:bg-rose-500/10' : 'border-rose-200 bg-rose-50/40 text-rose-600 hover:bg-rose-50'}`}>
             {Icon.trash}
@@ -359,6 +370,78 @@ function EventCard({ event, onEdit, onDelete, isDark, delay }) {
         </div>
       </div>
     </article>
+  )
+}
+
+// ─── Status Modal ─────────────────────────────────────────────────────────────
+function StatusModal({ open, event, onClose, onSave, isDark }) {
+  const [status, setStatus] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (event) setStatus(event.status ?? 'draft')
+  }, [event])
+
+  useEffect(() => {
+    if (!open) return
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
+  if (!open) return null
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      await onSave(event.id, { status })
+      onClose()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(10,14,26,0.7)', backdropFilter: 'blur(6px)' }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className={`ae-scale-in w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl ${isDark ? 'bg-slate-900 border border-white/10' : 'bg-white'}`}>
+        <div className={`flex items-center justify-between border-b px-5 py-4 ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
+          <div>
+            <h3 className={`font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>Chuyển trạng thái</h3>
+            <p className={`mt-0.5 text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{event?.title}</p>
+          </div>
+          <button onClick={onClose} className={`flex h-7 w-7 items-center justify-center rounded-full transition ${isDark ? 'text-slate-400 hover:bg-white/10' : 'text-slate-400 hover:bg-slate-100'}`}>
+            {Icon.close}
+          </button>
+        </div>
+        <div className="space-y-2 p-5">
+          {Object.entries(STATUS_CFG).map(([k, v]) => {
+            const active = status === k
+            return (
+              <button key={k} onClick={() => setStatus(k)}
+                className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold transition ${active
+                  ? isDark ? `${v.dCls} border-current` : `${v.cls} border-current`
+                  : isDark ? 'border-slate-700 bg-slate-800/40 text-slate-300 hover:bg-slate-800' : 'border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100'
+                  }`}>
+                <span className={`h-2 w-2 rounded-full ${active ? 'bg-current' : isDark ? 'bg-slate-600' : 'bg-slate-300'}`} />
+                {v.label}
+                {active && <span className="ml-auto text-[10px] font-bold uppercase tracking-widest opacity-70">Hiện tại</span>}
+              </button>
+            )
+          })}
+        </div>
+        <div className={`flex gap-2 border-t px-5 py-4 ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
+          <button onClick={onClose}
+            className={`flex-1 rounded-xl border py-2.5 text-sm font-semibold transition ${isDark ? 'border-white/10 text-slate-300 hover:bg-white/5' : 'border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
+            Hủy
+          </button>
+          <button onClick={handleSave} disabled={saving || status === event?.status}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 py-2.5 text-sm font-bold text-white shadow-md shadow-sky-500/25 transition hover:opacity-90 disabled:opacity-40">
+            {saving ? <><div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />Đang lưu…</> : 'Áp dụng'}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -374,6 +457,12 @@ function AdminEvents() {
   const [deleteEvent, setDeleteEvent] = useState(null)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [statusEvent, setStatusEvent] = useState(null)
+
+  const handleStatusSave = async (id, payload) => {
+    await adminApi.events.update(id, payload)
+    await loadEvents()
+  }
 
   useEffect(() => {
     if (authLoading) return
@@ -407,8 +496,8 @@ function AdminEvents() {
   }
 
   const handleEdit = (event) => {
-  navigate('/admin/events/create', { state: { editEvent: event } })
-}
+    navigate('/admin/events/create', { state: { editEvent: event } })
+  }
 
   const stats = useMemo(() => {
     return events.reduce((acc, e) => {
@@ -585,7 +674,7 @@ function AdminEvents() {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filtered.map((ev, i) => (
-                  <EventCard key={ev.id} event={ev} onEdit={handleEdit} onDelete={setDeleteEvent} isDark={isDark} delay={i * 50} />
+                  <EventCard key={ev.id} event={ev} onEdit={handleEdit} onStatus={setStatusEvent} onDelete={setDeleteEvent} isDark={isDark} delay={i * 50} />
                 ))}
               </div>
             )}
@@ -593,6 +682,7 @@ function AdminEvents() {
         </section>
 
         <EditModal open={!!editEvent} event={editEvent} onClose={() => setEditEvent(null)} onSave={handleSave} isDark={isDark} />
+        <StatusModal open={!!statusEvent} event={statusEvent} onClose={() => setStatusEvent(null)} onSave={handleStatusSave} isDark={isDark} />
         <ConfirmDelete open={!!deleteEvent} event={deleteEvent} onCancel={() => setDeleteEvent(null)} onConfirm={handleDelete} isDark={isDark} />
       </div>
     </>
