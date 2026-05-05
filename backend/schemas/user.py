@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 from models.user import UserRole
 
+# Schemas for user registration, login, update, and output
 
 class UserRegister(BaseModel):
     full_name: str
