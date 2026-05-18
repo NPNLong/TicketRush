@@ -36,11 +36,16 @@ def _send(to: str, subject: str, html: str) -> None:
     msg["To"] = to
     msg.attach(MIMEText(html, "html", "utf-8"))
 
-    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-        server.ehlo()
-        server.starttls()
-        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-        server.sendmail(settings.SMTP_USER, to, msg.as_string())
+    try:
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=30) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(settings.SMTP_USER, to, msg.as_string())
+
+    except Exception as e:
+        print("SMTP ERROR:", repr(e))
+        raise
 
 
 def send_reset_password_email(to: str, full_name: str, reset_token: str) -> None:
