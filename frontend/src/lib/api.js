@@ -82,6 +82,7 @@ export const ordersApi = {
   confirm: (id) => api.post(`/orders/${id}/confirm`),
   paymentQr: (id) => api.get(`/orders/${id}/payment-qr`),
   abandon: (id) => api.post(`/orders/${id}/abandon`),
+  cancel: (id) => api.post(`/orders/${id}/cancel`),
 }
 
 // ─── Tickets ───────────────────────────────────────────────────────────────────

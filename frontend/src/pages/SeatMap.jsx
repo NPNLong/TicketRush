@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { eventsApi, seatsApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
@@ -175,6 +175,7 @@ function SeatRow({ seat, onRemove, isDark, removing }) {
 function SeatMap() {
   const { eventId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, authLoading } = useAuth()
   const { isDark } = useTheme()
 
@@ -210,7 +211,19 @@ function SeatMap() {
       .then(([ev, map]) => {
         setEvent(ev); setSeatMap(map)
         setSelectedSectionId(map.sections[0]?.section_id ?? null)
-        const myLocked = map.sections.flatMap(s => s.seats).filter(s => s.locked_by_me).map(s => s.id)
+        const allSeatsFlat = map.sections.flatMap(s => s.seats)
+
+        // Restore ghế từ checkout nếu user bấm "Quay lại"
+        const restored = location.state?.restoredSeatIds
+        if (restored?.length) {
+          const availableIds = new Set(
+            allSeatsFlat.filter(s => restored.includes(s.id) && s.status === 'available').map(s => s.id)
+          )
+          if (availableIds.size) { setSelectedSeatIds(availableIds); return }
+        }
+
+        // Fallback: pre-select ghế đang locked bởi chính user
+        const myLocked = allSeatsFlat.filter(s => s.locked_by_me).map(s => s.id)
         if (myLocked.length) setSelectedSeatIds(new Set(myLocked))
       })
       .catch(e => setError(e.message))
@@ -313,7 +326,7 @@ function SeatMap() {
         }
         finalIds = [...finalIds, ...result.success]
       }
-      navigate('/checkout', { state: { seatIds: finalIds, eventTitle: event?.title } })
+      navigate('/checkout', { state: { seatIds: finalIds, eventTitle: event?.title, eventId } })
     } catch (e) {
       if (e.code === 'PAYMENT_COOLDOWN' && e.cooldown_until) {
         localStorage.setItem(COOLDOWN_KEY, e.cooldown_until)

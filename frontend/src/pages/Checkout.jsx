@@ -4,6 +4,8 @@ import { ordersApi, seatsApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 
+const COOLDOWN_KEY = 'ticketrush_payment_cooldown'
+
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 const toUtcMs = (dateStr) => {
   if (!dateStr) return null
@@ -137,6 +139,7 @@ function Checkout() {
 
   const seatIds = location.state?.seatIds ?? []
   const eventTitle = location.state?.eventTitle ?? ''
+  const eventId = location.state?.eventId ?? null
 
   const [order, setOrder] = useState(null)
   const [qrData, setQrData] = useState(null)
@@ -149,15 +152,17 @@ function Checkout() {
   const doneRef = useRef(false)
   const orderRef = useRef(null)
   const abandonCalledRef = useRef(false)
+  const goingBackRef = useRef(false)    // true khi user bấm "Quay lại" → không cooldown
+  const timerExpiredRef = useRef(false) // true khi hết giờ → backend đã cancel, không cooldown
   const pollRef = useRef(null)
 
   useEffect(() => { doneRef.current = paymentState === 'paid' }, [paymentState])
   useEffect(() => { orderRef.current = order }, [order])
 
-  // Abandon on unmount
+  // Abandon on unmount — chỉ khi user thực sự bỏ đi (home, tickets, đóng tab…)
   useEffect(() => {
     return () => {
-      if (doneRef.current || abandonCalledRef.current) return
+      if (doneRef.current || abandonCalledRef.current || goingBackRef.current || timerExpiredRef.current) return
       const o = orderRef.current
       if (!o?.id) return
       abandonCalledRef.current = true
@@ -168,6 +173,18 @@ function Checkout() {
         keepalive: true,
       }).catch(() => { })
     }
+  }, [])
+
+  // Browser back button → coi như "Quay lại chọn ghế", không cooldown
+  useEffect(() => {
+    const handlePopState = () => {
+      goingBackRef.current = true
+      localStorage.removeItem(COOLDOWN_KEY)
+      const o = orderRef.current
+      if (o?.id) ordersApi.cancel(o.id).catch(() => { })
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   // 1-second clock
@@ -237,10 +254,25 @@ function Checkout() {
 
   useEffect(() => {
     if (remaining !== null && remaining <= 0 && paymentState !== 'paid') {
+      timerExpiredRef.current = true
       stopPolling(); setPaymentState('expired')
       setTimeout(() => navigate(-1), 3000)
     }
   }, [remaining, paymentState])
+
+  // Quay lại chọn ghế: cancel đơn + xóa cooldown, KHÔNG abandon, giữ lại ghế đã chọn
+  const handleGoBack = async () => {
+    goingBackRef.current = true
+    localStorage.removeItem(COOLDOWN_KEY)
+    const o = orderRef.current
+    if (o?.id) {
+      try { await ordersApi.cancel(o.id) } catch { /* đơn có thể đã hết hạn */ }
+    }
+    navigate(
+      eventId ? `/seat-map/${eventId}` : '/',
+      { state: { restoredSeatIds: seatIds } }
+    )
+  }
 
   // ── Theme tokens ──────────────────────────────────────────────────────────────
   const bg = isDark ? 'bg-slate-950 text-slate-50' : 'bg-[#f6f7fb] text-slate-900'
@@ -360,7 +392,7 @@ function Checkout() {
               </h1>
               <p className={`mt-0.5 text-xs ${muted}`}>Đơn #{order?.id} · {eventTitle}</p>
             </div>
-            <button onClick={() => navigate(-1)}
+            <button onClick={handleGoBack}
               className={`inline-flex items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-medium transition hover:-translate-y-0.5 ${isDark ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:bg-white'}`}>
               <IconBack /> Quay lại
             </button>

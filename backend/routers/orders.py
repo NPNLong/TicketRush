@@ -124,6 +124,40 @@ def get_payment_qr(
     }
 
 
+@router.post("/{order_id}/cancel", status_code=204)
+def cancel_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    User bấm "Quay lại chọn ghế" — huỷ đơn, giải phóng ghế, KHÔNG set cooldown.
+    """
+    order = db.query(Order).filter(
+        Order.id == order_id,
+        Order.user_id == current_user.id,
+        Order.status == OrderStatus.pending,
+    ).first()
+    if not order:
+        return
+
+    seat_ids = [item.seat_id for item in order.items]
+    if seat_ids:
+        db.query(Seat).filter(
+            Seat.id.in_(seat_ids),
+            Seat.status == SeatStatus.locked,
+        ).update({
+            "status": SeatStatus.available,
+            "locked_by": None,
+            "locked_at": None,
+            "lock_expires_at": None,
+        }, synchronize_session=False)
+
+    order.status = OrderStatus.cancelled
+    current_user.payment_cooldown_until = None  # xóa cooldown cũ nếu có
+    db.commit()
+
+
 @router.post("/{order_id}/abandon", status_code=204)
 def abandon_order(
     order_id: int,
