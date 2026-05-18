@@ -1,5 +1,5 @@
 """
-Script khởi tạo database TicketRush — tạo bảng, seed tài khoản và sự kiện demo.
+Script khởi tạo database TicketRush - tạo bảng, seed tài khoản và sự kiện demo.
 
 Chạy một lần trước khi khởi động server lần đầu (hoặc sau khi reset DB):
     python create_db.py
@@ -22,7 +22,7 @@ def seed_demo_events() -> None:
     db = SessionLocal()
     try:
         if db.query(Event).count() > 0:
-            print("[Seed] Sự kiện đã tồn tại — bỏ qua bước tạo sự kiện demo.")
+            print("[Seed] Sự kiện đã tồn tại - bỏ qua bước tạo sự kiện demo.")
             return
 
         events_data = [
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     from main import _seed_admin
 
     print("=" * 55)
-    print("  TicketRush — Khởi tạo database")
+    print("  TicketRush - Khởi tạo database")
     print("=" * 55)
 
     print("\n[1/3] Tạo bảng và chạy migration...")

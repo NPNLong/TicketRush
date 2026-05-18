@@ -138,7 +138,7 @@
 #             <!-- Body text -->
 #             <p style="margin:0 0 28px;font-size:15px;color:#cbd5e1;line-height:1.7;">
 #               Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản TicketRush của bạn.
-#               Bấm vào nút bên dưới để tạo mật khẩu mới — quá trình chỉ mất vài giây.
+#               Bấm vào nút bên dưới để tạo mật khẩu mới - quá trình chỉ mất vài giây.
 #             </p>
 
 #             <!-- ── CTA button ── -->
@@ -206,7 +206,7 @@
 #                       </td>
 #                       <td style="font-size:13px;color:#94a3b8;line-height:1.6;">
 #                         <strong style="color:#fbbf24;">Không phải bạn?</strong><br>
-#                         Bỏ qua email này — tài khoản của bạn vẫn an toàn. Không ai có thể đặt lại mật khẩu nếu không có link.
+#                         Bỏ qua email này - tài khoản của bạn vẫn an toàn. Không ai có thể đặt lại mật khẩu nếu không có link.
 #                       </td>
 #                     </tr>
 #                   </table>
@@ -242,7 +242,7 @@
 
 #       <!-- Outer footer note -->
 #       <p style="margin:24px 0 0;font-size:11px;color:#334155;line-height:1.6;max-width:560px;text-align:center;">
-#         Email này được gửi tự động — vui lòng không trả lời.<br>
+#         Email này được gửi tự động - vui lòng không trả lời.<br>
 #         Cần hỗ trợ? Liên hệ <a href="mailto:support@ticketrush.vn" style="color:#475569;text-decoration:underline;">support@ticketrush.vn</a>
 #       </p>
 
@@ -419,7 +419,7 @@ border:1px solid rgba(251,191,36,0.18);
 <strong style="color:#fbbf24;">
 Không phải bạn?
 </strong><br>
-Bỏ qua email này — tài khoản của bạn vẫn an toàn.
+Bỏ qua email này - tài khoản của bạn vẫn an toàn.
 </p>
 </div>
 
@@ -449,3 +449,131 @@ border-top:1px solid rgba(255,255,255,0.06);
 """
 
     _send(to, subject, html)
+
+def send_contact_message(
+    from_name: str,
+    from_email: str,
+    topic: str,
+    message: str,
+) -> None:
+    """Gửi tin nhắn từ form Contact đến đội hỗ trợ."""
+    
+    # Map topic value → label tiếng Việt
+    TOPIC_LABELS = {
+        "support": "Hỗ trợ kỹ thuật",
+        "billing": "Thanh toán & hoàn tiền",
+        "event": "Đăng ký tổ chức sự kiện",
+        "partner": "Hợp tác doanh nghiệp",
+        "feedback": "Góp ý sản phẩm",
+        "other": "Khác",
+    }
+    topic_label = TOPIC_LABELS.get(topic, topic)
+    
+    # Email gửi đến admin/support
+    support_email = os.getenv("SUPPORT_EMAIL", "support@ticketrush.vn")
+    subject = f"[TicketRush Contact] {topic_label} · {from_name}"
+    
+    # Escape user input để tránh HTML injection
+    import html as html_lib
+    safe_name = html_lib.escape(from_name)
+    safe_email = html_lib.escape(from_email)
+    safe_message = html_lib.escape(message).replace("\n", "<br>")
+    safe_topic = html_lib.escape(topic_label)
+    
+    html_content = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{subject}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0a0e1a;font-family:Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0e1a;padding:40px 16px;">
+<tr>
+<td align="center">
+
+<table width="560" cellpadding="0" cellspacing="0"
+style="background:#0f172a;border-radius:20px;overflow:hidden;">
+
+<tr>
+<td style="height:4px;background:linear-gradient(135deg,#0ea5e9,#6366f1,#a855f7);"></td>
+</tr>
+
+<tr>
+<td style="padding:32px 40px;">
+
+<p style="margin:0 0 8px;color:#22d3ee;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">
+📬 Tin nhắn mới từ Contact form
+</p>
+
+<h1 style="color:#fff;font-size:24px;margin:0 0 24px;">
+{safe_topic}
+</h1>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+<tr>
+<td style="padding:12px 16px;background:#020617;border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+<p style="margin:0 0 4px;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+Người gửi
+</p>
+<p style="margin:0;color:#fff;font-size:15px;font-weight:600;">
+{safe_name}
+</p>
+<p style="margin:4px 0 0;">
+<a href="mailto:{safe_email}" style="color:#22d3ee;font-size:13px;text-decoration:none;">
+{safe_email}
+</a>
+</p>
+</td>
+</tr>
+</table>
+
+<p style="margin:0 0 8px;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+Nội dung
+</p>
+<div style="padding:16px;background:#020617;border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+<p style="margin:0;color:#cbd5e1;font-size:14px;line-height:1.7;">
+{safe_message}
+</p>
+</div>
+
+<div style="margin-top:24px;">
+<a href="mailto:{safe_email}?subject=Re: {safe_topic}"
+style="display:inline-block;padding:12px 24px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;">
+Trả lời {safe_name} →
+</a>
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:20px 40px;background:#020617;border-top:1px solid rgba(255,255,255,0.06);">
+<p style="margin:0;color:#475569;font-size:12px;">
+Tin nhắn được gửi tự động từ trang Contact của TicketRush.
+</p>
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+</table>
+
+</body>
+</html>"""
+    
+    # Gửi với reply_to là email người gửi để admin có thể bấm Reply trả lời thẳng
+    try:
+        response = resend.Emails.send({
+            "from": os.getenv("EMAIL_FROM"),
+            "to": [support_email],
+            "reply_to": [from_email],
+            "subject": subject,
+            "html": html_content,
+        })
+        print("Contact message sent:", response)
+    except Exception as e:
+        print("RESEND ERROR (contact):", repr(e))
+        raise

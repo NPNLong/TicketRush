@@ -274,7 +274,7 @@ function Banner() {
             )}
 
             <div className="relative min-h-[36rem]">
-              {/* Only render active slide — re-keyed to retrigger animations */}
+              {/* Only render active slide - re-keyed to retrigger animations */}
               <div
                 key={`slide-${activeIndex}-${animKey}`}
                 className="absolute inset-0 grid items-center gap-8 p-6 md:grid-cols-[1.1fr_0.9fr] md:p-8 lg:p-10"

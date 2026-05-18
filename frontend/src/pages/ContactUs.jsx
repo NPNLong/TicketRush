@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext.jsx'
+import { contactApi } from '../lib/api.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const TEAM = [
     {
@@ -319,11 +321,28 @@ function TeamCard({ member, index, isDark }) {
 // ─── Main ────────────────────────────────────────────────────────────────────
 function ContactUs() {
     const { isDark } = useTheme()
-    const [form, setForm] = useState({ name: '', email: '', topic: 'support', message: '' })
+    const { user } = useAuth()
+    const [form, setForm] = useState({
+        name: user?.full_name || '',
+        email: user?.email || '',
+        topic: 'support',
+        message: ''
+    })
     const [sending, setSending] = useState(false)
     const [sent, setSent] = useState(false)
     const [error, setError] = useState('')
     const [openFaq, setOpenFaq] = useState(0)
+
+    // Sync nếu user load sau (auth async)
+    useEffect(() => {
+        if (user) {
+            setForm(p => ({
+                ...p,
+                name: p.name || user.full_name || '',
+                email: user.email || '',
+            }))
+        }
+    }, [user])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -335,14 +354,27 @@ function ContactUs() {
         e.preventDefault()
         setError('')
 
-        if (!form.name.trim() || form.name.trim().length < 2) { setError('Vui lòng nhập họ tên (ít nhất 2 ký tự).'); return }
-        if (!/^\S+@\S+\.\S+$/.test(form.email)) { setError('Email không hợp lệ.'); return }
-        if (!form.message.trim() || form.message.trim().length < 10) { setError('Nội dung phải có ít nhất 10 ký tự.'); return }
+        if (!form.name.trim() || form.name.trim().length < 2) {
+            setError('Vui lòng nhập họ tên (ít nhất 2 ký tự).')
+            return
+        }
+        if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+            setError('Email không hợp lệ.')
+            return
+        }
+        if (!form.message.trim() || form.message.trim().length < 10) {
+            setError('Nội dung phải có ít nhất 10 ký tự.')
+            return
+        }
 
         setSending(true)
         try {
-            // TODO: thay bằng API thực: await contactApi.send(form)
-            await new Promise(r => setTimeout(r, 900))
+            await contactApi.send({
+                name: form.name.trim(),
+                email: form.email.trim(),
+                topic: form.topic,
+                message: form.message.trim(),
+            })
             setSent(true)
         } catch (err) {
             setError(err.message || 'Gửi yêu cầu thất bại. Vui lòng thử lại.')
@@ -471,7 +503,7 @@ function ContactUs() {
                     </div>
 
                     {/* ════════════════ Form + Sidebar ════════════════ */}
-                    <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">
+                    <div className="mt-10 grid gap-6 ">
 
                         {/* Form */}
                         <div className={`ctc-form overflow-hidden rounded-3xl border shadow-sm ${card}`}>
@@ -516,11 +548,38 @@ function ContactUs() {
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div>
                                                 <label className={labelCls}>Họ và tên</label>
-                                                <input name="name" value={form.name} onChange={handleChange} placeholder="Nguyễn Văn A" required className={inputCls} />
+                                                <input
+                                                    name="name"
+                                                    value={form.name}
+                                                    disabled
+                                                    readOnly
+                                                    className={`${inputCls} cursor-not-allowed opacity-70`}
+                                                />
+                                                <p className={`mt-1.5 flex items-center gap-1 text-[11px] ${subtle}`}>
+                                                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                                        <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                                                        <path d="M5 7V5a3 3 0 0 1 6 0v2" />
+                                                    </svg>
+                                                    Họ tên từ tài khoản đăng nhập
+                                                </p>
                                             </div>
                                             <div>
                                                 <label className={labelCls}>Email</label>
-                                                <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="a@mail.com" required className={inputCls} />
+                                                <input
+                                                    name="email"
+                                                    type="email"
+                                                    value={form.email}
+                                                    disabled
+                                                    readOnly
+                                                    className={`${inputCls} cursor-not-allowed opacity-70`}
+                                                />
+                                                <p className={`mt-1.5 flex items-center gap-1 text-[11px] ${subtle}`}>
+                                                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                                        <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                                                        <path d="M5 7V5a3 3 0 0 1 6 0v2" />
+                                                    </svg>
+                                                    Email tài khoản đang đăng nhập
+                                                </p>
                                             </div>
                                         </div>
 
@@ -567,62 +626,6 @@ function ContactUs() {
                                 )}
                             </div>
                         </div>
-
-                        {/* Sidebar */}
-                        <aside className="ctc-side space-y-5">
-                            {/* Office hours */}
-                            <div className={`rounded-2xl border p-5 shadow-sm ${card}`}>
-                                <div className="mb-3 flex items-center gap-2">
-                                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${isDark ? 'bg-sky-500/15 text-sky-400' : 'bg-sky-50 text-sky-600'}`}>
-                                        <Icon name="clock" />
-                                    </div>
-                                    <h3 className="text-sm font-bold">Giờ làm việc</h3>
-                                </div>
-                                <ul className={`space-y-1.5 text-sm ${muted}`}>
-                                    <li className="flex justify-between">
-                                        <span>T2 - T6</span>
-                                        <span className="font-semibold">8:00 - 18:00</span>
-                                    </li>
-                                    <li className="flex justify-between">
-                                        <span>T7</span>
-                                        <span className="font-semibold">9:00 - 17:00</span>
-                                    </li>
-                                    <li className="flex justify-between">
-                                        <span>CN &amp; lễ</span>
-                                        <span className="font-semibold">Nghỉ</span>
-                                    </li>
-                                </ul>
-                                <div className={`mt-3 border-t pt-3 ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
-                                    <p className={`text-[11px] leading-relaxed ${subtle}`}>
-                                        Hotline hỗ trợ vé: <span className="font-semibold">8h - 22h</span> mọi ngày, kể cả lễ tết.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Offices */}
-                            <div id="offices" className={`rounded-2xl border p-5 shadow-sm ${card}`}>
-                                <div className="mb-3 flex items-center gap-2">
-                                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${isDark ? 'bg-indigo-500/15 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                                        <Icon name="pin" />
-                                    </div>
-                                    <h3 className="text-sm font-bold">Văn phòng</h3>
-                                </div>
-                                <div className="space-y-3">
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-wide">Hà Nội</p>
-                                        <p className={`mt-0.5 text-xs leading-relaxed ${muted}`}>
-                                            Tầng 8, Tòa nhà Capital, 109 Trần Hưng Đạo, Hoàn Kiếm
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-wide">TP. Hồ Chí Minh</p>
-                                        <p className={`mt-0.5 text-xs leading-relaxed ${muted}`}>
-                                            Tầng 12, Bitexco Financial Tower, 2 Hải Triều, Quận 1
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </aside>
                     </div>
 
                     {/* ════════════════ FAQ ════════════════ */}

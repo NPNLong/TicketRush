@@ -100,6 +100,11 @@ export const queueApi = {
     api.post(`/queue/${eventId}/verify-token?token=${encodeURIComponent(token)}`),
 }
 
+// ─── Contact ──────────────────────────────────────────────────────────────────
+export const contactApi = {
+  send: (body) => api.post('/contact', body),
+}
+
 // ─── Admin ─────────────────────────────────────────────────────────────────────
 export const adminApi = {
   dashboard: () => api.get('/admin/dashboard'),

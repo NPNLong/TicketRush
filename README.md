@@ -5,7 +5,7 @@
 <img width="282" height="282" alt="ticketrush_cropped" src="https://github.com/user-attachments/assets/a91af2ab-8c60-428d-b5f8-006f8b28635e" />
 
 
-**Nền tảng đặt vé sự kiện trực tuyến — nhanh chóng, dễ dàng, an toàn.**
+**Nền tảng đặt vé sự kiện trực tuyến - nhanh chóng, dễ dàng, an toàn.**
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
@@ -36,7 +36,7 @@
 
 ## 🎯 Giới thiệu
 
-**TicketRush** là nền tảng đặt vé sự kiện trực tuyến full-stack, cho phép người dùng khám phá concerts, lễ hội, hội nghị — chọn chỗ ngồi trực quan trên sơ đồ ghế 2D và nhận vé QR ngay sau khi thanh toán.
+**TicketRush** là nền tảng đặt vé sự kiện trực tuyến full-stack, cho phép người dùng khám phá concerts, lễ hội, hội nghị - chọn chỗ ngồi trực quan trên sơ đồ ghế 2D và nhận vé QR ngay sau khi thanh toán.
 
 Hệ thống được xây dựng với **phòng chờ ảo (virtual queue)** để xử lý lượng truy cập đột biến cho các sự kiện hot, đảm bảo trải nghiệm công bằng cho tất cả người dùng.
 
@@ -68,23 +68,23 @@ Hệ thống được xây dựng với **phòng chờ ảo (virtual queue)** đ
 ## 🛠 Công nghệ
 
 ### Backend
-- **[FastAPI](https://fastapi.tiangolo.com)** — Python web framework hiệu năng cao
-- **[SQLAlchemy](https://sqlalchemy.org)** — ORM với PostgreSQL
-- **[Supabase](https://supabase.com)** — PostgreSQL cloud hosting
-- **[python-jose](https://github.com/mpdavis/python-jose)** — JWT authentication
-- **[Passlib](https://passlib.readthedocs.io)** — Password hashing (bcrypt)
-- **[WebSocket](https://fastapi.tiangolo.com/advanced/websockets/)** — Real-time seat map & queue
+- **[FastAPI](https://fastapi.tiangolo.com)** - Python web framework hiệu năng cao
+- **[SQLAlchemy](https://sqlalchemy.org)** - ORM với PostgreSQL
+- **[Supabase](https://supabase.com)** - PostgreSQL cloud hosting
+- **[python-jose](https://github.com/mpdavis/python-jose)** - JWT authentication
+- **[Passlib](https://passlib.readthedocs.io)** - Password hashing (bcrypt)
+- **[WebSocket](https://fastapi.tiangolo.com/advanced/websockets/)** - Real-time seat map & queue
 
 ### Frontend
-- **[React 18](https://react.dev)** + **[Vite](https://vitejs.dev)** — UI framework
-- **[React Router v6](https://reactrouter.com)** — Client-side routing
-- **[Tailwind CSS v3](https://tailwindcss.com)** — Utility-first styling
-- **[Axios](https://axios-http.com)** — HTTP client
+- **[React 18](https://react.dev)** + **[Vite](https://vitejs.dev)** - UI framework
+- **[React Router v6](https://reactrouter.com)** - Client-side routing
+- **[Tailwind CSS v3](https://tailwindcss.com)** - Utility-first styling
+- **[Axios](https://axios-http.com)** - HTTP client
 
 ### AI & Integrations
-- **[Google Gemini](https://ai.google.dev)** — AI-powered business insights
-- **[VietQR](https://vietqr.io)** — Vietnam bank transfer QR generation
-- **[QR Code](https://pypi.org/project/qrcode/)** — Ticket QR generation
+- **[Google Gemini](https://ai.google.dev)** - AI-powered business insights
+- **[VietQR](https://vietqr.io)** - Vietnam bank transfer QR generation
+- **[QR Code](https://pypi.org/project/qrcode/)** - Ticket QR generation
 
 ---
 
@@ -154,11 +154,11 @@ npm install
 ### 4. Khởi động
 
 ```bash
-# Terminal 1 — Backend
+# Terminal 1 - Backend
 cd backend
 uvicorn main:app --reload --port 8000
 
-# Terminal 2 — Frontend
+# Terminal 2 - Frontend
 cd frontend
 npm run dev
 ```
@@ -246,8 +246,8 @@ Sau khi chạy backend, truy cập:
 
 | URL | Mô tả |
 |-----|-------|
-| `http://localhost:8000/docs` | Swagger UI — interactive API docs |
-| `http://localhost:8000/redoc` | ReDoc — API reference |
+| `http://localhost:8000/docs` | Swagger UI - interactive API docs |
+| `http://localhost:8000/redoc` | ReDoc - API reference |
 
 ### Các endpoint chính
 

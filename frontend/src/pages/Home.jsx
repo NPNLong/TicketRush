@@ -117,7 +117,7 @@ function Pagination({ page, totalPages, onChange, isDark }) {
   )
 }
 
-// ─── AnimatedEventCard wrapper — re-triggers animation on page change ─────────
+// ─── AnimatedEventCard wrapper - re-triggers animation on page change ─────────
 function AnimatedCard({ event, isDark, index, pageKey }) {
   return (
     <div

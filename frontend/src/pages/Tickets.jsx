@@ -383,7 +383,7 @@ function Tickets() {
       .finally(() => setLoading(false))
   }, [user, authLoading])
 
-  // Debounce search input — chỉ filter sau khi user dừng gõ 250ms
+  // Debounce search input - chỉ filter sau khi user dừng gõ 250ms
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim().toLowerCase()), 250)
     return () => clearTimeout(t)

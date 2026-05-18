@@ -63,7 +63,7 @@ const Icon = {
   close: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3l10 10M13 3L3 13" /></svg>,
   alert: <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="8" cy="8" r="6.5" /><path d="M8 5v3.5M8 11h.01" strokeLinecap="round" /></svg>,
   image: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><rect x="2" y="2" width="12" height="12" rx="2" /><circle cx="5.5" cy="5.5" r="1" /><path d="M2 10.5l3.5-3.5 2.5 2.5 1.5-1.5 3 3" /></svg>,
-  // Dashboard icon — 2×2 grid of squares
+  // Dashboard icon - 2×2 grid of squares
   dashboard: (
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="2" width="5" height="5" rx="1" />
@@ -582,7 +582,7 @@ function AdminEvents() {
             </div>
           )}
 
-          {/* ── Stats strip — thay "Nháp" bằng "Hết vé" ── */}
+          {/* ── Stats strip - thay "Nháp" bằng "Hết vé" ── */}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { label: 'Tổng sự kiện', value: stats.total || 0, color: 'sky' },

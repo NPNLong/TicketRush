@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 import os
 
 from database import init_db
-from routers import auth, events, seats, orders, tickets, admin, queue, ws
+from routers import auth, events, seats, orders, tickets, admin, queue, ws, contact
 from services.scheduler import start_scheduler, stop_scheduler
 
 
@@ -89,6 +89,7 @@ app.include_router(tickets.router)
 app.include_router(admin.router)
 app.include_router(queue.router)
 app.include_router(ws.router)
+app.include_router(contact.router)
 
 
 @app.get("/", tags=["Health"])
