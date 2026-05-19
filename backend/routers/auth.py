@@ -9,7 +9,7 @@ from core.deps import get_current_user
 from core.security import hash_password, verify_password, create_access_token
 from core.config import settings
 from models.user import User, UserRole
-from schemas.user import UserRegister, UserLogin, UserUpdate, UserOut, TokenOut, ForgotPasswordRequest, ResetPasswordRequest
+from schemas.user import UserRegister, UserLogin, UserUpdate, UserOut, TokenOut, ForgotPasswordRequest, ResetPasswordRequest, VerifyResetTokenRequest
 from services.email_service import send_reset_password_email
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
@@ -111,9 +111,9 @@ def forgot_password(body: ForgotPasswordRequest, db: Session = Depends(get_db)):
 def reset_password(body: ResetPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.reset_token == body.reset_token).first()
     if not user:
-        raise HTTPException(status_code=400, detail="Mã đặt lại không hợp lệ")
+        raise HTTPException(status_code=400, detail="Mã đặt lại không hợp lệ hoặc đã hết hạn")
     if user.reset_token_expires_at and datetime.utcnow() > user.reset_token_expires_at:
-        raise HTTPException(status_code=400, detail="Mã đặt lại đã hết hạn")
+        raise HTTPException(status_code=400, detail="Mã đặt lại không hợp lệ hoặc đã hết hạn")
     if len(body.new_password) < 8:
         raise HTTPException(status_code=400, detail="Mật khẩu phải có ít nhất 8 ký tự")
 
@@ -122,3 +122,33 @@ def reset_password(body: ResetPasswordRequest, db: Session = Depends(get_db)):
     user.reset_token_expires_at = None
     db.commit()
     return {"message": "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại."}
+
+
+@router.post("/verify-reset-token")
+def verify_reset_token(
+    body: VerifyResetTokenRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(
+        User.reset_token == body.reset_token
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=400,
+            detail="Mã đặt lại không hợp lệ hoặc đã hết hạn"
+        )
+
+    if (
+        user.reset_token_expires_at
+        and datetime.utcnow() > user.reset_token_expires_at
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Mã đặt lại không hợp lệ hoặc đã hết hạn"
+        )
+
+    return {
+        "valid": True,
+        "message": "Mã hợp lệ"
+    }

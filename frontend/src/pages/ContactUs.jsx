@@ -196,6 +196,12 @@ function Icon({ name }) {
         case 'plus': return <svg {...props} strokeWidth="2.2"><path d="M12 5v14M5 12h14" /></svg>
         case 'sparkle': return <svg {...props}><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" /></svg>
         case 'cap': return <svg {...props}><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5" /></svg>
+        case 'chevron-up':
+            return (
+                <svg {...props}>
+                    <path d="m6 14 6-6 6 6" />
+                </svg>
+            )
         default: return null
     }
 }
@@ -406,9 +412,14 @@ function ContactUs() {
             color: isDark ? 'bg-emerald-500/15 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
         },
         {
-            icon: 'pin', label: 'Văn phòng', value: 'Hà Nội · TP.HCM',
-            hint: 'Làm việc giờ hành chính', href: '#offices',
-            color: isDark ? 'bg-indigo-500/15 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
+            icon: 'clock',
+            label: 'Giờ làm việc',
+            value: '24/7',
+            hint: 'Hỗ trợ mọi lúc, mọi nơi',
+            href: '#support-hours',
+            color: isDark
+                ? 'bg-indigo-500/15 text-indigo-400'
+                : 'bg-indigo-50 text-indigo-600'
         },
     ]
 
@@ -528,8 +539,18 @@ function ContactUs() {
                                         <p className={`mt-1.5 text-sm ${muted}`}>
                                             Chúng tôi sẽ phản hồi qua <span className="font-semibold">{form.email}</span> trong vòng 48 giờ làm việc.
                                         </p>
-                                        <button onClick={() => { setSent(false); setForm({ name: '', email: '', topic: 'support', message: '' }) }}
-                                            className="mt-5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:opacity-90">
+                                        <button
+                                            onClick={() => {
+                                                setSent(false)
+                                                setForm({
+                                                    name: user?.full_name || '',
+                                                    email: user?.email || '',
+                                                    topic: 'support',
+                                                    message: '',
+                                                })
+                                            }}
+                                            className="mt-5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:opacity-90"
+                                        >
                                             Gửi tin nhắn khác
                                         </button>
                                     </div>
@@ -643,25 +664,66 @@ function ContactUs() {
 
                         <div className="mx-auto max-w-3xl space-y-3">
                             {FAQ.map((item, i) => (
-                                <div key={i} className={`overflow-hidden rounded-2xl border transition ${card} ${openFaq === i ? 'shadow-md' : ''}`}>
+                                <div
+                                    key={i}
+                                    className={`overflow-hidden rounded-2xl border transition-all duration-300 ${card} ${openFaq === i
+                                        ? 'shadow-lg shadow-sky-500/10'
+                                        : 'hover:-translate-y-0.5 hover:shadow-md'
+                                        }`}
+                                >
                                     <button
                                         type="button"
                                         onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition"
+                                        className={`flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-all duration-300 ${openFaq === i
+                                            ? (isDark
+                                                ? 'bg-sky-500/5'
+                                                : 'bg-sky-50/70')
+                                            : ''
+                                            }`}
                                     >
-                                        <span className="text-sm font-bold">{item.q}</span>
-                                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${openFaq === i
-                                            ? (isDark ? 'rotate-45 bg-sky-500/20 text-sky-400' : 'rotate-45 bg-sky-100 text-sky-600')
-                                            : (isDark ? 'bg-white/5 text-slate-400' : 'bg-slate-100 text-slate-500')
+                                        <span className={`text-sm font-bold transition-colors duration-300 ${openFaq === i
+                                            ? 'text-sky-500'
+                                            : ''
                                             }`}>
-                                            <Icon name="plus" />
+                                            {item.q}
+                                        </span>
+
+                                        <span
+                                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${openFaq === i
+                                                ? (isDark
+                                                    ? 'bg-sky-500/20 text-sky-400 scale-110'
+                                                    : 'bg-sky-100 text-sky-600 scale-110')
+                                                : (isDark
+                                                    ? 'bg-white/5 text-slate-400 hover:bg-white/10'
+                                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200')
+                                                }`}
+                                        >
+                                            <div
+                                                className={`transition-transform duration-300 ease-in-out ${openFaq === i ? 'rotate-180' : 'rotate-0'
+                                                    }`}
+                                            >
+                                                <Icon name="chevron-up" />
+                                            </div>
                                         </span>
                                     </button>
-                                    {openFaq === i && (
-                                        <div className={`px-5 pb-4 text-sm leading-relaxed ${muted}`}>
-                                            {item.a}
+
+                                    <div
+                                        className={`grid transition-all duration-300 ease-in-out ${openFaq === i
+                                            ? 'grid-rows-[1fr] opacity-100'
+                                            : 'grid-rows-[0fr] opacity-0'
+                                            }`}
+                                    >
+                                        <div className="overflow-hidden">
+                                            <div
+                                                className={`px-5 pb-4 pt-2 text-sm leading-relaxed transition-all duration-300 ${muted} ${openFaq === i
+                                                    ? 'translate-y-0'
+                                                    : '-translate-y-2'
+                                                    }`}
+                                            >
+                                                {item.a}
+                                            </div>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                             ))}
                         </div>

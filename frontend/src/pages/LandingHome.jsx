@@ -696,10 +696,94 @@ const IMG_CROWD = 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?
 const QR_IMG = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TicketRush'
 
 const FEATURES = [
-    { icon: '🎯', title: 'Đặt vé chính xác', desc: 'Sơ đồ ghế ngồi trực quan theo thời gian thực - biết chính xác chỗ ngồi trước khi thanh toán.' },
-    { icon: '⚡', title: 'Tức thì, không chờ đợi', desc: 'Hàng chờ ảo thông minh đảm bảo công bằng cho mọi người dùng khi sự kiện hot mở bán.' },
-    { icon: '🔒', title: 'Bảo mật tuyệt đối', desc: 'Vé QR mã hóa chống làm giả, xác thực tại cổng chỉ trong vài giây.' },
-    { icon: '📱', title: 'Vé điện tử tiện lợi', desc: 'Nhận vé ngay trên điện thoại, không in giấy, không lo mất vé.' },
+    {
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                    d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinejoin="round"
+                />
+                <path
+                    d="M9.5 12l1.8 1.8L15 10"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        ),
+        title: 'Đặt vé chính xác',
+        desc: 'Sơ đồ ghế ngồi trực quan theo thời gian thực - biết chính xác chỗ ngồi trước khi thanh toán.',
+        color: 'from-sky-500/20 to-cyan-500/10 text-sky-400 border-sky-500/20'
+    },
+
+    {
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                    d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        ),
+        title: 'Tức thì, không chờ đợi',
+        desc: 'Hàng chờ ảo thông minh đảm bảo công bằng cho mọi người dùng khi sự kiện hot mở bán.',
+        color: 'from-amber-500/20 to-orange-500/10 text-amber-400 border-amber-500/20'
+    },
+
+    {
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect
+                    x="4"
+                    y="11"
+                    width="16"
+                    height="9"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                />
+                <path
+                    d="M8 11V8a4 4 0 118 0v3"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                />
+            </svg>
+        ),
+        title: 'Bảo mật tuyệt đối',
+        desc: 'Vé QR mã hóa chống làm giả, xác thực tại cổng chỉ trong vài giây.',
+        color: 'from-emerald-500/20 to-green-500/10 text-emerald-400 border-emerald-500/20'
+    },
+
+    {
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect
+                    x="7"
+                    y="2"
+                    width="10"
+                    height="20"
+                    rx="2.5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                />
+                <path
+                    d="M11 18h2"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                />
+            </svg>
+        ),
+        title: 'Vé điện tử tiện lợi',
+        desc: 'Nhận vé ngay trên điện thoại, không in giấy, không lo mất vé.',
+        color: 'from-violet-500/20 to-fuchsia-500/10 text-violet-400 border-violet-500/20'
+    },
 ]
 
 const STATS = [
@@ -901,7 +985,7 @@ export default function LandingHome() {
                 <section className="bg-slate-900 py-20">
                     <div className="mx-auto max-w-7xl px-6 md:px-10">
                         <div className="mb-12 text-center">
-                            <p className="text-xs font-bold uppercase tracking-widest text-sky-400">Tại sao TicketRush?</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-sky-400">Tại sao chọn TicketRush?</p>
                             <h2 className="display-font mt-2 text-4xl font-extrabold text-white md:text-5xl">
                                 Trải nghiệm đặt vé{' '}
                                 <span className="gradient-text">khác biệt</span>
@@ -909,13 +993,35 @@ export default function LandingHome() {
                         </div>
                         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                             {FEATURES.map((f, i) => (
-                                <div key={i}
-                                    className="group rounded-2xl border border-slate-800 bg-slate-800/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-sky-500/30 hover:bg-slate-800">
-                                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-700 text-2xl transition-transform duration-300 group-hover:scale-110">
+                                <div
+                                    key={i}
+                                    className="group relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-800/80 to-slate-900/90 p-6 transition-all duration-250 hover:-translate-y-2 hover:border-slate-700 hover:shadow-2xl hover:shadow-sky-500/10"
+                                >
+                                    {/* glow */}
+                                    <div className="absolute inset-0 opacity-0 transition-opacity duration-250 group-hover:opacity-100">
+                                        <div className="absolute -top-20 right-0 h-40 w-40 rounded-full bg-sky-500/10 blur-3xl" />
+                                    </div>
+
+                                    {/* icon */}
+                                    <div
+                                        className={`relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border bg-gradient-to-br ${f.color} backdrop-blur-xl transition-all duration-250 group-hover:scale-110 group-hover:rotate-3`}
+                                    >
                                         {f.icon}
                                     </div>
-                                    <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
-                                    <p className="text-xs leading-relaxed text-slate-400">{f.desc}</p>
+
+                                    {/* content */}
+                                    <h3 className="relative mb-2 text-base font-bold text-white transition-colors duration-300 group-hover:text-sky-300">
+                                        {f.title}
+                                    </h3>
+
+                                    <p className="relative text-sm leading-relaxed text-slate-400">
+                                        {f.desc}
+                                    </p>
+
+                                    {/* bottom line */}
+                                    <div className="relative mt-5 h-px w-full overflow-hidden bg-slate-800">
+                                        <div className="h-full w-0 bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-250 group-hover:w-full" />
+                                    </div>
                                 </div>
                             ))}
                         </div>

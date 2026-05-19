@@ -351,7 +351,7 @@ style="background:#0f172a;border-radius:20px;overflow:hidden;">
 <td style="padding:32px 40px;">
 
 <h1 style="color:#fff;font-size:28px;margin:0 0 16px;">
-Đặt lại mật khẩu
+🔐 Đặt lại mật khẩu
 </h1>
 
 <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
@@ -374,7 +374,7 @@ text-decoration:none;
 border-radius:12px;
 font-weight:700;
 ">
-Đặt lại mật khẩu →
+Đặt lại mật khẩu
 </a>
 </div>
 
@@ -450,6 +450,7 @@ border-top:1px solid rgba(255,255,255,0.06);
 
     _send(to, subject, html)
 
+
 def send_contact_message(
     from_name: str,
     from_email: str,
@@ -504,7 +505,7 @@ style="background:#0f172a;border-radius:20px;overflow:hidden;">
 <td style="padding:32px 40px;">
 
 <p style="margin:0 0 8px;color:#22d3ee;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">
-📬 Tin nhắn mới từ Contact form
+💬 Tin nhắn mới từ Contact form
 </p>
 
 <h1 style="color:#fff;font-size:24px;margin:0 0 24px;">
@@ -541,7 +542,7 @@ Nội dung
 <div style="margin-top:24px;">
 <a href="mailto:{safe_email}?subject=Re: {safe_topic}"
 style="display:inline-block;padding:12px 24px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;">
-Trả lời {safe_name} →
+Trả lời {safe_name}
 </a>
 </div>
 
@@ -551,7 +552,7 @@ Trả lời {safe_name} →
 <tr>
 <td style="padding:20px 40px;background:#020617;border-top:1px solid rgba(255,255,255,0.06);">
 <p style="margin:0;color:#475569;font-size:12px;">
-Tin nhắn được gửi tự động từ trang Contact của TicketRush.
+© 2026 TicketRush. All rights reserved.
 </p>
 </td>
 </tr>

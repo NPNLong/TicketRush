@@ -242,13 +242,15 @@ function NotFound() {
           {/* ── Footer ── */}
           <p className={`nf-foot mt-10 text-xs ${muted}`}>
             Nghĩ đây là lỗi?{' '}
-            <a
-              href="mailto:support@ticketrush.vn"
-              className={`font-semibold underline underline-offset-4 transition ${isDark ? 'text-sky-400 hover:text-sky-300' : 'text-sky-600 hover:text-sky-500'
+            <Link
+              to="/contact-us"
+              className={`font-semibold underline underline-offset-4 transition ${isDark
+                  ? 'text-sky-400 hover:text-sky-300'
+                  : 'text-sky-600 hover:text-sky-500'
                 }`}
             >
               Liên hệ hỗ trợ
-            </a>
+            </Link>
           </p>
         </div>
       </div>

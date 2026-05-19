@@ -59,6 +59,13 @@ export const authApi = {
   updateMe: (body) => api.put('/auth/me', body),
   forgotPassword: (body) => api.post('/auth/forgot-password', body),
   resetPassword: (body) => api.post('/auth/reset-password', body),
+  verifyResetToken: async (token) => {
+    const res = await api.post('/auth/verify-reset-token', {
+      reset_token: token,
+    })
+
+    return res.data
+  },
 }
 
 // ─── Events ────────────────────────────────────────────────────────────────────
