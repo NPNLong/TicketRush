@@ -241,22 +241,51 @@ export default function LegalPageLayout({ eyebrow, title, lastUpdated, intro, se
                                 <div className="mt-4 flex flex-wrap gap-2">
                                     <Link
                                         to="/contact-us"
-                                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:opacity-90 hover:-translate-y-0.5"
+                                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:-translate-y-0.5 hover:opacity-90"
                                     >
-                                        Liên hệ hỗ trợ
-                                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                            <path d="M3 8h10M9 4l4 4-4 4" />
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="shrink-0"
+                                        >
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                            <path d="M8 9h8" />
+                                            <path d="M8 13h5" />
                                         </svg>
+
+                                        Liên hệ hỗ trợ
                                     </Link>
+
                                     <button
                                         type="button"
                                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                        className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5 ${isDark ? 'border-white/10 text-slate-300 hover:bg-white/5' : 'border-slate-200 text-slate-700 hover:bg-white'
+                                        className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5 ${isDark
+                                            ? 'border-white/10 text-slate-300 hover:bg-white/5'
+                                            : 'border-slate-200 text-slate-700 hover:bg-white'
                                             }`}
                                     >
-                                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                            <path d="M8 13V3M4 7l4-4 4 4" />
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="shrink-0"
+                                        >
+                                            <path d="M12 19V5" />
+                                            <path d="M6 11l6-6 6 6" />
+                                            <path d="M5 19h14" />
                                         </svg>
+
                                         Lên đầu trang
                                     </button>
                                 </div>
